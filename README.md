@@ -1,0 +1,1 @@
+# ng-pocketbase-core
