@@ -1,19 +1,25 @@
-import {Injectable}                                  from "@angular/core";
+import {Injectable} from "@angular/core";
 import {
+  Admin,
   AuthMethodsList,
   AuthProviderInfo,
   ClientResponseError,
   ExternalAuth,
   Record,
   RecordAuthResponse,
-}                                                    from "pocketbase";
-import {BehaviorSubject, from, Observable, Observer} from "rxjs";
+}                   from "pocketbase";
+import {
+  BehaviorSubject,
+  from,
+  Observable,
+  Observer,
+}                   from "rxjs";
 import {
   User,
-}                                                    from "../types";
+}                   from "../types";
 import {
   PocketBaseService,
-}                                                    from "./pocketbase.service";
+}                   from "./pocketbase.service";
 
 
 @Injectable(
@@ -25,13 +31,15 @@ export class AuthService<U extends User> {
   //@ts-ignore
   public readonly userData: BehaviorSubject<U> = new BehaviorSubject<U>();
   public readonly isLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public readonly isAdmin: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public readonly providers: BehaviorSubject<Array<AuthProviderInfo>> = new BehaviorSubject<Array<AuthProviderInfo>>([]);
 
-  public get snapshot(): { loggedIn: boolean, userData: U, providers: Array<AuthProviderInfo> } {
+  public get snapshot(): { loggedIn: boolean, userData: U, providers: Array<AuthProviderInfo>, isAdmin: boolean } {
     return {
       loggedIn: this.isUserLoggedIn(),
       userData: this.userData.value,
       providers: this.providers.value,
+      isAdmin: this._isAdmin(),
     };
   }
 
@@ -43,6 +51,7 @@ export class AuthService<U extends User> {
           this.providers.next(authMethods.authProviders);
         });
     this.isLoggedIn.next(this.isUserLoggedIn());
+    this.isAdmin.next(this._isAdmin());
 
     if (this.isUserLoggedIn()) {
       this.userData.next(
@@ -132,8 +141,14 @@ export class AuthService<U extends User> {
     );
   }
 
+  private _isAdmin(): boolean {
+    const model = this.pbservice.getPB().authStore.model;
+    return model instanceof Admin;
+  }
+
   private isUserLoggedIn(): boolean {
-    return this.pbservice.getPB().authStore.model instanceof Record;
+    const model = this.pbservice.getPB().authStore.model;
+    return model instanceof Record || model instanceof Admin;
   }
 
 
@@ -142,21 +157,18 @@ export class AuthService<U extends User> {
     this.isLoggedIn.next(false);
   }
 
-
-  public getProviders(): BehaviorSubject<Array<AuthProviderInfo>> {
-    return this.providers;
-  }
-
   public login(username: string, password: string): Promise<RecordAuthResponse<Record> | ClientResponseError> {
     return this.pbservice.getPB()
                .collection("users")
                .authWithPassword(username, password)
                .then((r) => {
                  this.isLoggedIn.next(true);
+                 this.isAdmin.next(this._isAdmin());
                  return r;
                })
                .catch((err: ClientResponseError) => {
                  this.isLoggedIn.next(false);
+                 this.isAdmin.next(false);
                  throw err;
                });
 

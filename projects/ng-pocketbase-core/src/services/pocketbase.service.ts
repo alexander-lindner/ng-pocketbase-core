@@ -10,9 +10,9 @@ import {PocketBaseConfig} from "../ng-pocketbase-core.module";
 )
 export class PocketBaseService {
   private readonly pb: PocketBase;
-  private readonly frontendUiUrl: string;
-  private readonly backendUrl: string;
-  private readonly redirectUrl: string;
+  public readonly frontendUiUrl: string;
+  public readonly backendUrl: string;
+  public readonly redirectUrl: string;
 
   constructor(private config: PocketBaseConfig) {
     this.frontendUiUrl = config.getFrontendUiUrl();
@@ -26,10 +26,6 @@ export class PocketBaseService {
 
   public getPB(): PocketBase {
     return this.pb;
-  }
-
-  public getRedirectUrl(): string {
-    return this.redirectUrl;
   }
 
   public getPublicUrl(idOrName: string, id: string, filename: string): string {

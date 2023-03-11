@@ -155,7 +155,10 @@ export abstract class BasicCrud<T extends BasicType> implements OnDestroy {
                          .subscribe("*", (e: RecordSubscription<Record>) => {
                            switch (e.action) {
                              case "create":
-                               this._items.push(this.createItem(e.record));
+                               const id = e.record.id;
+                               if(this._items.find(value => value.id === id) === undefined) {
+                                 this._items.push(this.createItem(e.record));
+                               }
                                break;
                              case "update":
                                const index2 = this._items.findIndex(value => value.id === e.record.id);
