@@ -47,9 +47,9 @@ export class DetailsComponent implements OnInit {
 ## Changelog
 
 * 0.0.5
- * fix: only adding realtime records if they are not already loaded
- * feature: auth interceptor
- * feature: differential of admins and normal users
+  * fix: only adding realtime records if they are not already loaded
+  * feature: auth interceptor
+  * feature: differential of admins and normal users
 
 ## License
 Mozilla Public License Version 2.0

@@ -44,7 +44,8 @@ export class AuthService<U extends User> {
   }
 
   constructor(private pbservice: PocketBaseService) {
-    this.pbservice.getPB()
+    this.pbservice
+        .getPB()
         .collection("users")
         .listAuthMethods()
         .then((authMethods: AuthMethodsList) => {
@@ -75,7 +76,8 @@ export class AuthService<U extends User> {
 
   public authRefresh(): Observable<RecordAuthResponse<Record>> {
     return from(
-      this.pbservice.getPB()
+      this.pbservice
+          .getPB()
           .collection("users")
           .authRefresh(),
     );
@@ -83,7 +85,8 @@ export class AuthService<U extends User> {
 
   public confirmVerification(token: string): Observable<boolean> {
     return from(
-      this.pbservice.getPB()
+      this.pbservice
+          .getPB()
           .collection("users")
           .confirmVerification(token),
     );
@@ -91,7 +94,8 @@ export class AuthService<U extends User> {
 
   public requestVerification(email: string): Observable<boolean> {
     return from(
-      this.pbservice.getPB()
+      this.pbservice
+          .getPB()
           .collection("users")
           .requestVerification(email),
     );
@@ -102,7 +106,8 @@ export class AuthService<U extends User> {
       return this.getNotLoggedInObservable();
     }
     return from(
-      this.pbservice.getPB()
+      this.pbservice
+          .getPB()
           .collection("users")
           .requestEmailChange(newMail),
     );
@@ -111,7 +116,8 @@ export class AuthService<U extends User> {
 
   public confirmEmailChange(token: string, password: string): Observable<boolean> {
     return from(
-      this.pbservice.getPB()
+      this.pbservice
+          .getPB()
           .collection("users")
           .confirmEmailChange(
             token,
@@ -133,7 +139,8 @@ export class AuthService<U extends User> {
       return this.getNotLoggedInObservable<Array<ExternalAuth>>();
     }
     return from(
-      this.pbservice.getPB()
+      this.pbservice
+          .getPB()
           .collection("users")
           .listExternalAuths(
             model.id,
@@ -157,45 +164,51 @@ export class AuthService<U extends User> {
     this.isLoggedIn.next(false);
   }
 
-  public login(username: string, password: string): Promise<RecordAuthResponse<Record> | ClientResponseError> {
-    return this.pbservice.getPB()
-               .collection("users")
-               .authWithPassword(username, password)
-               .then((r) => {
-                 this.isLoggedIn.next(true);
-                 this.isAdmin.next(this._isAdmin());
-                 return r;
-               })
-               .catch((err: ClientResponseError) => {
-                 this.isLoggedIn.next(false);
-                 this.isAdmin.next(false);
-                 throw err;
-               });
+  public login(username: string, password: string): Observable<RecordAuthResponse<Record> | ClientResponseError> {
+    return from(
+      this.pbservice
+          .getPB()
+          .collection("users")
+          .authWithPassword(username, password)
+          .then((r) => {
+            this.isLoggedIn.next(true);
+            this.isAdmin.next(this._isAdmin());
+            return r;
+          })
+          .catch((err: ClientResponseError) => {
+            this.isLoggedIn.next(false);
+            this.isAdmin.next(false);
+            throw err;
+          }),
+    );
 
   }
 
   public gotoExternalAuthProvider(provider: AuthProviderInfo): void {
-    const url: string = provider.authUrl + this.pbservice.getRedirectUrl();
+    const url: string = provider.authUrl + this.pbservice.redirectUrl;
     localStorage.setItem("provider", JSON.stringify(provider));
     window.location.href = url;
   }
 
-  public oauth2(provider: AuthProviderInfo, code: string): Promise<RecordAuthResponse<Record>> {
-    return this.pbservice.getPB()
-               .collection("users")
-               .authWithOAuth2(
-                 provider.name,
-                 code,
-                 provider.codeVerifier,
-                 this.pbservice.getRedirectUrl(),
-                 {
-                   emailVisibility: false,
-                 },
-               )
-               .then(async (authData: RecordAuthResponse) => {
-                 this.isLoggedIn.next(this.isUserLoggedIn());
-                 return authData;
-               });
+  public oauth2(provider: AuthProviderInfo, code: string): Observable<RecordAuthResponse<Record>> {
+    return from(
+      this.pbservice
+          .getPB()
+          .collection("users")
+          .authWithOAuth2(
+            provider.name,
+            code,
+            provider.codeVerifier,
+            this.pbservice.redirectUrl,
+            {
+              emailVisibility: false,
+            },
+          )
+          .then(async (authData: RecordAuthResponse) => {
+            this.isLoggedIn.next(this.isUserLoggedIn());
+            return authData;
+          }),
+    );
   }
 
   private getNotLoggedInObservable<T>(): Observable<T> {
