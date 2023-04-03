@@ -5,6 +5,15 @@ import {PocketBaseService}                                       from "./service
 import {BasicType}                                               from "./types";
 
 /**
+ * The status of the service for internal use
+ */
+enum STATUS {
+  LOADING,  // the service is loading the records
+  READY,    // the service has loaded the records
+  UNINITIALIZED, // the service has not been initialized
+}
+
+/**
  * Basic CRUD service
  *
  * It allows to create, read, update and delete records from a collection.
@@ -52,15 +61,29 @@ export abstract class BasicCrud<T extends BasicType> implements OnDestroy {
    */
   private promiseAlreadySet: boolean = false;
 
+  /**
+   * The status of the service, which is used internally to prevent duplicated loading and items.
+   *
+   * It starts with `STATUS.UNINITIALIZED` and changes to `STATUS.LOADING` when the items list is loaded.
+   * If the items list is loaded successfully, the status changes to `STATUS.READY`.
+   * @type {STATUS}
+   * @private
+   */
+  private status: STATUS = STATUS.UNINITIALIZED;
+
   // public readonly snapshot: Array<T>;
 
   /**
    * initializes the service.
    * @param {PocketBaseService} pocketBaseService internal pocketbase service
    * @param {string} idOrName collection id or name
+   * @param {boolean} autoLoad true if the items list should be loaded automatically
    * @protected
    */
-  protected constructor(protected pocketBaseService: PocketBaseService, protected idOrName: string) {
+  protected constructor(protected pocketBaseService: PocketBaseService, protected idOrName: string, autoLoad: boolean = true) {
+    if (autoLoad) {
+      this.requestRecords();
+    }
     this.subscribe();
   }
 
@@ -98,7 +121,10 @@ export abstract class BasicCrud<T extends BasicType> implements OnDestroy {
           .collection(this.idOrName)
           .create(data)
           .then((record: Record) => {
-            this._items.push(this.createItem(record));
+            if (this._items.find((value: T) => value.id === record.id) === undefined) {
+              this._items.push(this.createItem(record));
+            }
+
             this.reloadItems();
             return this.createItem(record);
           }),
@@ -206,9 +232,10 @@ export abstract class BasicCrud<T extends BasicType> implements OnDestroy {
    * @private
    */
   private async _requestRecords(page: number): Promise<void> {
-    if (this._items.length > 0) {
+    if (this.status != STATUS.UNINITIALIZED) {
       return;
     }
+    this.status = STATUS.LOADING;
     let records: ListResult<Record> = await this.pocketBaseService
                                                 .getPB()
                                                 .collection(this.idOrName)
@@ -221,6 +248,7 @@ export abstract class BasicCrud<T extends BasicType> implements OnDestroy {
     if (records.totalPages > records.page) {
       await this._requestRecords(records.page + 1);
     }
+    this.status = STATUS.READY;
   }
 
   /**

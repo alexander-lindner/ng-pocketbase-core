@@ -1,5 +1,6 @@
 import {CommonModule}                                  from "@angular/common";
 import {InjectionToken, ModuleWithProviders, NgModule} from "@angular/core";
+import {config}                                        from "rxjs";
 import {IsLoggedInDirective}                           from "./directives/auth/loggedIn/is-logged-in.directive";
 import {passwordEqualsDirective}                       from "./directives/password-equals.directive";
 
@@ -7,14 +8,14 @@ import {passwordEqualsDirective}                       from "./directives/passwo
   {
     declarations: [
       IsLoggedInDirective,
-      passwordEqualsDirective
+      passwordEqualsDirective,
     ],
     imports: [
       CommonModule,
     ],
-    exports:[
+    exports: [
       IsLoggedInDirective,
-      passwordEqualsDirective
+      passwordEqualsDirective,
     ]
   },
 )
@@ -39,7 +40,7 @@ export class NgPocketbaseCoreModule {
 
 
 export class PocketBaseConfig {
-  constructor(readonly backendUrl: string, readonly frontendUiUrl: string) {
+  constructor(readonly backendUrl: string, readonly frontendUiUrl: string,  readonly redirectUrl: string) {
   }
 
   public getBackendUrl(): string {
@@ -49,11 +50,16 @@ export class PocketBaseConfig {
   public getFrontendUiUrl(): string {
     return this.frontendUiUrl;
   }
+
+  public getRedirectUrl(): string {
+    return this.redirectUrl;
+  }
 }
 
 export interface ModuleOptions {
   readonly frontendUiUrl: string;
   readonly backendUrl: string;
+  readonly redirectUrl: string;
 }
 
 // I am the token that makes the raw options available to the following factory function.
@@ -72,7 +78,7 @@ export function providePocketBaseConfig(options: ModuleOptions): PocketBaseConfi
   // if (typeof (options.backendUrl) !== "string") {
   //   return null;
   // }
-  return new PocketBaseConfig(options.backendUrl, options.frontendUiUrl);
+  return new PocketBaseConfig(options.backendUrl, options.frontendUiUrl, options.redirectUrl);
 }
 
 

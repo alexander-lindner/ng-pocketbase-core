@@ -17,8 +17,8 @@ export class PocketBaseService {
   constructor(private config: PocketBaseConfig) {
     this.frontendUiUrl = config.getFrontendUiUrl();
     this.backendUrl = config.getBackendUrl();
-
-    this.redirectUrl = this.frontendUiUrl + "/ng-pocketbase/redirect";
+    this.backendUrl = config.getBackendUrl();
+    this.redirectUrl = config.getRedirectUrl();
 
     this.pb = new PocketBase(config.getBackendUrl());
     this.pb.autoCancellation(false);

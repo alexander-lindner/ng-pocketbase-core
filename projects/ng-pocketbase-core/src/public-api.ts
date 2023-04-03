@@ -6,3 +6,4 @@ export * from "./types";
 export * from "./ng-pocketbase-core.module";
 export * from "./directives/auth/loggedIn/is-logged-in.directive";
 export * from "./directives/password-equals.directive";
+export * from "./interceptors/auth-interceptor.service";
