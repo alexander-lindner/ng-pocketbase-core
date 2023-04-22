@@ -1,6 +1,5 @@
 import {CommonModule}                                  from "@angular/common";
 import {InjectionToken, ModuleWithProviders, NgModule} from "@angular/core";
-import {config}                                        from "rxjs";
 import {IsLoggedInDirective}                           from "./directives/auth/loggedIn/is-logged-in.directive";
 import {passwordEqualsDirective}                       from "./directives/password-equals.directive";
 

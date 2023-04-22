@@ -2,6 +2,31 @@ import {Directive, Input, OnDestroy}                                          fr
 import {AbstractControl, NG_VALIDATORS, NgModel, ValidationErrors, Validator} from "@angular/forms";
 import {Subscription}                                                         from "rxjs";
 
+/**
+ * A simple validator that checks if the value of the input field is equal to the value of another input field.
+ *
+ * @example
+ * Basic usage:
+ * ```typescript
+ *
+ * <input type="password"
+ *                  placeholder="*******"
+ *                  required
+ *                  ngModel
+ *                  name="password"
+ *                  id="passwordchange"
+ *                  #passwordChange="ngModel">
+ *
+ *   <input type="password"
+ *                  placeholder="*******"
+ *                  required
+ *                  ngModel
+ *                  name="password2"
+ *                  id="passwordchange2"
+ *                  [passwordEquals]="passwordChange"
+ *                  #passwordChange2="ngModel">
+ * ```
+ */
 @Directive(
   {
     selector: "[passwordEquals]",

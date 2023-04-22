@@ -1,3 +1,5 @@
+import {AuthProviderInfo} from "pocketbase";
+
 export type BasicType = {
   readonly id: string
 }
@@ -9,3 +11,4 @@ export type User = BasicType & {
   readonly  oldPassword?: string,
   readonly email?: string,
 };
+export type AuthData<U> = { loggedIn: boolean, userData: U, providers: Array<AuthProviderInfo>, isAdmin: boolean };

@@ -1,8 +1,8 @@
 import {Injectable, OnDestroy}                                   from "@angular/core";
 import {ListResult, Record, RecordSubscription, UnsubscribeFunc} from "pocketbase";
-import {BehaviorSubject, from, Observable, Observer}             from "rxjs";
-import {PocketBaseService}                                       from "./services/pocketbase.service";
-import {BasicType}                                               from "./types";
+import {BehaviorSubject, from, Observable, Observer} from "rxjs";
+import {PocketBaseService}                           from "./pocketbase.service";
+import {BasicType}                                   from "../types";
 
 /**
  * The status of the service for internal use

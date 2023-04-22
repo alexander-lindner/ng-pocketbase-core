@@ -1,5 +1,5 @@
 export * from "./auth.guard";
-export * from "./basic-crud.service";
+export * from "./services/basic-crud.service";
 export * from "./services/auth.service";
 export * from "./services/pocketbase.service";
 export * from "./types";
