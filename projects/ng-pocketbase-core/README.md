@@ -5,6 +5,10 @@ It heavily uses pocketbase's realtime api, so any changes made to the database w
 ## Installation
 `yarn add @ng-pocketbase/core` or `npm install @ng-pocketbase/core`
 
+## Documentation
+
+See [GitHub](https://github.com/alexander-lindner/ng-pocketbase-core).
+
 ## Examples
 ```typescript
 @Injectable({providedIn: "root"})

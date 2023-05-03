@@ -1,0 +1,44 @@
+<form ngForm #loginForm="ngForm" (ngSubmit)="loginWithEmail()">
+  <p>
+    <mat-form-field appearance="fill">
+      <mat-label>e-Mail</mat-label>
+      <input type="email"
+             placeholder="bobsmith@gmail.com"
+             required
+             ngModel
+             email
+             matInput
+             name="email"
+             id="email"
+             #email="ngModel"/>
+
+      <mat-hint align="end" *ngIf="!email.valid && email.touched">
+        Please enter a correct e-mail address.
+      </mat-hint>
+    </mat-form-field>
+  </p>
+  <p>
+    <mat-form-field appearance="fill">
+      <mat-label>Password</mat-label>
+      <input
+        matInput
+        type="password"
+        placeholder="*******"
+        class="input"
+        required
+        ngModel
+        name="password"
+        id="password"
+        #password="ngModel"/>
+      <mat-hint align="end" *ngIf="!password.valid && password.touched">
+        Please enter a password.
+      </mat-hint>
+    </mat-form-field>
+  </p>
+  <p>
+
+    <button mat-stroked-button [disabled]="!loginForm.valid" [ngClass]="{'is-loading': isSending}">
+      Login
+    </button>
+  </p>
+</form>

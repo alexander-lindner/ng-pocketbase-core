@@ -1,0 +1,29 @@
+<mat-toolbar>
+  <span>My Demo App</span>
+  <span class="spacer"></span>
+  <button mat-raised-button routerLinkActive="active" routerLink="/users" *isLoggedIn="true">
+    <mat-icon>Users</mat-icon>
+    Users
+  </button>
+  <span class="spacer"></span>
+  <button mat-raised-button routerLink="/profil" routerLinkActive="active" *isLoggedIn="true">
+    <mat-icon>supervised_user_circle</mat-icon>
+    Profil
+  </button>
+  <span class="spacer"></span>
+  <button mat-raised-button routerLinkActive="active" routerLink="/login" *isLoggedIn="false">
+    <mat-icon>login</mat-icon>
+    Login
+  </button>
+  <button mat-raised-button routerLinkActive="active" routerLink="/logout" *isLoggedIn="true">
+    <mat-icon>logout</mat-icon>
+    Logout
+  </button>
+</mat-toolbar>
+<br/>
+<br/>
+<br/>
+<div class="container">
+  <router-outlet></router-outlet>
+</div>
+

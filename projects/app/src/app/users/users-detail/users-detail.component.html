@@ -1,0 +1,63 @@
+<form ngForm #userForm="ngForm" (ngSubmit)="save()">
+  <h2 class="heading">Change user data</h2>
+  <br/>
+  <p>
+    <mat-checkbox [formControl]="emailVisibility">Is e-Mail public?</mat-checkbox>
+  </p>
+  <p>
+    <mat-form-field appearance="fill">
+      <mat-label>Username</mat-label>
+      <input
+        matInput
+        type="text"
+        class="input"
+        required
+        [ngModel]="user?.username"
+        name="username"
+        id="username"
+        #username="ngModel">
+      <mat-hint align="end" *ngIf="!username.valid && username.touched">
+        Please enter a password.
+      </mat-hint>
+    </mat-form-field>
+  </p>
+  <p>
+    <mat-form-field appearance="fill">
+      <mat-label>Name</mat-label>
+      <input
+        matInput
+        type="text"
+        class="input"
+        required
+        [ngModel]="user?.name"
+        name="name"
+        id="name"
+        #name="ngModel">
+      <mat-hint align="end" *ngIf="!name.valid && name.touched">
+        Please enter a password.
+      </mat-hint>
+    </mat-form-field>
+  </p>
+  <p>
+    <mat-form-field appearance="fill">
+      <mat-label>e-mail</mat-label>
+      <input
+        matInput
+        type="email"
+        class="input"
+        required
+        [ngModel]="user?.email"
+        email
+        name="email"
+        id="email"
+        #email="ngModel">
+      <mat-hint align="end" *ngIf="email.touched && !email.valid ">
+        Please enter the same password as above.
+      </mat-hint>
+    </mat-form-field>
+  </p>
+  <button mat-stroked-button [disabled]="!userForm.valid">
+    Save
+  </button>
+
+</form>

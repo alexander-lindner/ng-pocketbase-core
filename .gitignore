@@ -41,3 +41,4 @@ testem.log
 .DS_Store
 Thumbs.db
 /projects/ng-pocketbase-core/node_modules/
+/projects/server/pb_data/

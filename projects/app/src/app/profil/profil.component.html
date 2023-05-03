@@ -1,0 +1,142 @@
+<h1 *isLoggedIn="true" class="heading is-size-2">Welcome to your profile, {{username}}</h1>
+
+
+<mat-card *ngIf="errorMessage !== ''">
+  <mat-card-header>
+    <mat-card-title>Error</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    {{errorMessage}}
+    <br/>
+    <button mat-raised-button color="warn" (click)="errorMessage ='' ">Dismiss</button>
+  </mat-card-content>
+</mat-card>
+<br/> <br/>
+<mat-tab-group preserveContent>
+  <mat-tab label="Change e-Mail">
+
+    <form ngForm #emailForm="ngForm" (ngSubmit)="changeEmail()">
+      <br/> <p>
+      <mat-form-field appearance="fill">
+        <mat-label>e-Mail</mat-label>
+        <input
+          matInput
+          type="email"
+          placeholder="your@mail.tld"
+          class="input"
+          required
+          ngModel
+          email
+          name="email"
+          id="email"
+          #email="ngModel">
+        <mat-hint align="end" *ngIf="!email.valid && email.touched">
+          Please enter a valid e-Mail.
+        </mat-hint>
+      </mat-form-field>
+ </p>
+ <p>
+      <button mat-raised-button [disabled]="!emailForm.valid" [ngClass]="{'loading': isSending}">
+        Reset email
+      </button>
+ </p>
+      <p>
+        You will receive an email with a link to confirm your new email address.
+      </p>
+    </form>
+
+  </mat-tab>
+
+  <mat-tab label="Social Media Linking">
+    <br/>
+
+    <ul class="level" *ngIf="ownProviders.length>0">
+      <li *ngFor="let item of ownProviders" class="level-item">
+        <a class="button" (click)="removeProvider(item.provider)">{{item.provider}}</a>
+      </li>
+    </ul>
+    <div>
+      <mat-card *ngIf="ownProviders.length==0">
+        <mat-card-header>
+          <mat-card-title>Info</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          Your account is not linked to any social media account.
+        </mat-card-content>
+      </mat-card>
+      <br/>
+      <p>
+        Login in through a social media account to link it to your account.
+      </p>
+    </div>
+  </mat-tab>
+  <mat-tab label="Change password">
+    <form ngForm #passwordForm="ngForm" (ngSubmit)="changePassword()">
+      <br/>
+
+      <p>
+        <mat-form-field appearance="fill">
+          <mat-label>Old</mat-label>
+          <input
+            matInput
+            type="password"
+            placeholder="*******"
+            class="input"
+            required
+            ngModel
+            name="oldPassword"
+            id="oldPassword"
+            #oldPassword="ngModel">
+          <mat-hint align="end" *ngIf="!oldPassword.valid && oldPassword.touched">
+            Please enter a password.
+          </mat-hint>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field appearance="fill">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            type="password"
+            placeholder="*******"
+            class="input"
+            required
+            ngModel
+            name="password"
+            id="passwordchange"
+            #passwordChange="ngModel">
+          <mat-hint align="end" *ngIf="!passwordChange.valid && passwordChange.touched">
+            Please enter a password.
+          </mat-hint>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field appearance="fill">
+          <mat-label>Repeated</mat-label>
+          <input
+            matInput
+            type="password"
+            placeholder="*******"
+            class="input"
+            required
+            ngModel
+            name="password2"
+            id="passwordchange2"
+            [passwordEquals]="passwordChange"
+            #passwordChange2="ngModel">
+          <mat-hint align="end" *ngIf="passwordChange2.touched && !passwordChange2.valid ">
+            Please enter the same password as above.
+          </mat-hint>
+        </mat-form-field>
+      </p>
+
+
+      <button mat-stroked-button [disabled]="!passwordForm.valid" [ngClass]="{'loading': isSending}">
+        Reset password
+      </button>
+
+
+    </form>
+
+  </mat-tab>
+</mat-tab-group>
