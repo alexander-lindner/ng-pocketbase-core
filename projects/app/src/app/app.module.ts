@@ -1,35 +1,35 @@
-import {NgOptimizedImage}  from "@angular/common";
-import {HTTP_INTERCEPTORS} from "@angular/common/http";
+import {NgOptimizedImage}                 from "@angular/common";
+import {HTTP_INTERCEPTORS}                from "@angular/common/http";
 import {NgModule}                         from "@angular/core";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatButtonModule}                  from "@angular/material/button";
-import {MatCardModule}     from "@angular/material/card";
-import {MatCheckboxModule} from "@angular/material/checkbox";
-import {MatCommonModule}   from "@angular/material/core";
-import {MatInputModule}    from "@angular/material/input";
-import {MatSortModule}     from "@angular/material/sort";
-import {MatTableModule}    from "@angular/material/table";
-import {MatTabsModule}     from "@angular/material/tabs";
-import {BrowserModule}     from "@angular/platform-browser";
+import {MatCardModule}                    from "@angular/material/card";
+import {MatCheckboxModule}                from "@angular/material/checkbox";
+import {MatCommonModule}                  from "@angular/material/core";
+import {MatInputModule}                   from "@angular/material/input";
+import {MatSortModule}                    from "@angular/material/sort";
+import {MatTableModule}                   from "@angular/material/table";
+import {MatTabsModule}                    from "@angular/material/tabs";
+import {BrowserModule}                    from "@angular/platform-browser";
 import {
   AuthInterceptorService,
   NgPocketbaseCoreModule,
   PocketBaseConfig,
-}                          from "../../../ng-pocketbase-core/src/public-api";
-import {environment}       from "../environments/environment";
+}                                         from "../../../ng-pocketbase-core/src/public-api";
+import {environment}                      from "../environments/environment";
 
 import {AppRoutingModule}        from "./app-routing.module";
 import {AppComponent}            from "./app.component";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
-import {MatToolbarModule} from "@angular/material/toolbar";
-import {MatIconModule}    from "@angular/material/icon";
-import { LoginComponent } from './login/login.component';
-import { LogoutComponent } from './logout/logout.component';
-import { ProfilComponent } from './profil/profil.component';
-import { HomeComponent } from './home/home.component';
-import { UsersComponent } from './users/users.component';
-import { UsersDetailComponent } from './users/users-detail/users-detail.component';
+import {MatToolbarModule}     from "@angular/material/toolbar";
+import {MatIconModule}        from "@angular/material/icon";
+import {LoginComponent}       from "./login/login.component";
+import {LogoutComponent}      from "./logout/logout.component";
+import {ProfilComponent}      from "./profil/profil.component";
+import {HomeComponent}        from "./home/home.component";
+import {UsersComponent}       from "./users/users.component";
+import {UsersDetailComponent} from "./users/users-detail/users-detail.component";
 
 
 @NgModule(
@@ -63,7 +63,7 @@ import { UsersDetailComponent } from './users/users-detail/users-detail.componen
       ReactiveFormsModule,
     ],
     providers: [
-          {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true},
+      {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true},
     ],
     bootstrap: [AppComponent],
   },

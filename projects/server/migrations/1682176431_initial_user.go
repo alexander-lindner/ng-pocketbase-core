@@ -35,7 +35,7 @@ func init() {
 			query := txDao.DB().Insert("_admins", map[string]interface{}{
 				"id":           "admin",
 				"email":        "admin@domain.tld",
-				"passwordHash": generatePassword("demo"),
+				"passwordHash": generatePassword("admin"),
 				"tokenKey":     "test",
 			})
 			if _, err := query.Execute(); err != nil {
