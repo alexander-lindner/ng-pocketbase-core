@@ -147,7 +147,13 @@ Furthermore, there is the `*isLoggedIn` directive that can be used to only use h
 </button>
 ```
 
-
+### Interceptors
+```typescript
+providers: [
+ { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true },
+ //...
+]
+```
 ## Example Application
 
 This repository contains an [example application](projects/app) that uses the library.

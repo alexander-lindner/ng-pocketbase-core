@@ -16,6 +16,7 @@ import {User}                                      from "../types";
  *  //...
  * ]
  * ```
+ * @public
  */
 @Injectable()
 export class AuthInterceptorService implements HttpInterceptor {

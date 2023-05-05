@@ -26,6 +26,7 @@ import {Subscription}                                                         fr
  *                  [passwordEquals]="passwordChange"
  *                  #passwordChange2="ngModel">
  * ```
+ * @public
  */
 @Directive(
   {

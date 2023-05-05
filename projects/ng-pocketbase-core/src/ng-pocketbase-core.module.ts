@@ -3,8 +3,27 @@ import {InjectionToken, ModuleWithProviders, NgModule} from "@angular/core";
 import {IsLoggedInDirective}                           from "./directives/auth/loggedIn/is-logged-in.directive";
 import {passwordEqualsDirective}                       from "./directives/password-equals.directive";
 
-@NgModule(
-  {
+/**
+ * This module contains all the core functionality of \@ng-pocketbase/core module.
+ *
+ * You can import this module in your app.module.ts like this:
+ * ```typescript
+ * @NgModule({
+ *  imports: [
+ *    NgPocketbaseCoreModule.forRoot({
+ *      backendUrl: "http://localhost:3000",
+ *      frontendUiUrl: "http://localhost:4200",
+ *      redirectUrl: "http://localhost:4200",
+ *    }),
+ *  //...
+ *  ],
+ * //...
+ * })
+ *  export class AppModule { }
+ * ```
+ * @public
+ */
+@NgModule({
     declarations: [
       IsLoggedInDirective,
       passwordEqualsDirective,
@@ -16,8 +35,7 @@ import {passwordEqualsDirective}                       from "./directives/passwo
       IsLoggedInDirective,
       passwordEqualsDirective,
     ]
-  },
-)
+  })
 export class NgPocketbaseCoreModule {
   static forRoot(options?: ModuleOptions): ModuleWithProviders<NgPocketbaseCoreModule> {
     return ({
@@ -37,10 +55,12 @@ export class NgPocketbaseCoreModule {
   }
 }
 
-
+/**
+ * This class contains the configuration for the \@ng-pocketbase/core module.
+ * @public
+ */
 export class PocketBaseConfig {
-  constructor(readonly backendUrl: string, readonly frontendUiUrl: string,  readonly redirectUrl: string) {
-  }
+  constructor(readonly backendUrl: string, readonly frontendUiUrl: string,  readonly redirectUrl: string) {}
 
   public getBackendUrl(): string {
     return this.backendUrl;
@@ -55,17 +75,28 @@ export class PocketBaseConfig {
   }
 }
 
+/**
+ * This interface is used to pass each config option to the \@ng-pocketbase/core module.
+ * @public
+ */
 export interface ModuleOptions {
   readonly frontendUiUrl: string;
   readonly backendUrl: string;
   readonly redirectUrl: string;
 }
 
-// I am the token that makes the raw options available to the following factory function.
-// --
-// NOTE: This value has to be exported otherwise the AoT compiler won't see it.
-export var FOR_ROOT_OPTIONS_TOKEN = new InjectionToken<ModuleOptions>("forRoot() MyService configuration.");
+/**
+ * This token is used to pass the config options to the \@ng-pocketbase/core module.
+ * @public
+ */
+export const FOR_ROOT_OPTIONS_TOKEN = new InjectionToken<ModuleOptions>("forRoot() @ng-pocketbase/core configuration.");
 
+/**
+ * This function is used to provide the PocketBaseConfig to the \@ng-pocketbase/core module.
+ * @param options - the config options
+ * @returns config object
+ * @public
+ */
 export function providePocketBaseConfig(options: ModuleOptions): PocketBaseConfig {
   // if (!options) {
   //   return null;

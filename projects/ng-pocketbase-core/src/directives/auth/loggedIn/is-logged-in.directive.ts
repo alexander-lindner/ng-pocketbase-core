@@ -11,7 +11,10 @@ import {
 import {AuthService} from "../../../services/auth.service";
 import {User}        from "../../../types";
 
-
+/**
+ * A simple directive that shows the element if the user is logged in.
+ * @public
+ */
 @Directive(
   {
     selector: "[isLoggedIn]",
@@ -29,6 +32,12 @@ export class IsLoggedInDirective implements OnInit, OnDestroy {
       }
     }
   }
+  /**
+   * Depending on the value of this input, the element is shown or removed from the DOM.
+   */
+  get isLoggedIn(): boolean {
+    return this.currentlyLoggedIn();
+  }
 
 
   constructor(
@@ -36,7 +45,7 @@ export class IsLoggedInDirective implements OnInit, OnDestroy {
     private elementRef: ElementRef,
     private renderer: Renderer2,
     private templateRef: TemplateRef<any>,
-    private vcRef: ViewContainerRef
+    private vcRef: ViewContainerRef,
   ) {}
 
   ngOnDestroy(): void {}
@@ -50,12 +59,4 @@ export class IsLoggedInDirective implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {}
-
-  // @HostListener("click") onClick(event: Event) {
-  //   if (this.currentlyLoggedOff()) {
-  //
-  //   }
-  // }
-  //
-  // @HostBinding("style.backgroundColor") backgroundColor: string = "";
 }

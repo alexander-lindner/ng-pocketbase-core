@@ -22,10 +22,10 @@
     "@angular/platform-browser-dynamic": "^15.1.0",
     "@angular/router": "^15.1.0",
     "materialize-css": "next",
+    "pocketbase": "^0.12.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.12.0",
-    "pocketbase": "^0.12.1"
+    "zone.js": "~0.12.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^15.1.6",

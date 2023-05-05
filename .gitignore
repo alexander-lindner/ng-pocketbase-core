@@ -42,3 +42,5 @@ testem.log
 Thumbs.db
 /projects/ng-pocketbase-core/node_modules/
 /projects/server/pb_data/
+.yarn
+tsdoc-metadata.json

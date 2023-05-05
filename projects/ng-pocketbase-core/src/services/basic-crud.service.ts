@@ -6,6 +6,7 @@ import {BasicType}                                               from "../types"
 
 /**
  * The status of the service for internal use
+ * @private
  */
 enum STATUS {
   LOADING,  // the service is loading the records
@@ -29,15 +30,16 @@ enum STATUS {
  * @Injectable({providedIn: "root"})
  * export class FeedService extends BasicCrud<Feed> {}
  * ```
- * @param T the type of the records
+ * @param T - the type of the records
+ * @public
  */
 @Injectable()
 export abstract class BasicCrud<T extends BasicType> implements OnDestroy {
   /**
    * the internal list of items.
    * Only interact with this list if you know what you're doing.
-   * @type {Array<T>} items
-   * @protected
+   * @typeParam T - the type of the items
+   * @internal
    */
   protected _items: Array<T> = new Array<T>();
   /**
@@ -45,20 +47,17 @@ export abstract class BasicCrud<T extends BasicType> implements OnDestroy {
    *
    * Use this list to interact with the items.
    *
-   * @type {BehaviorSubject<Array<T>>} items
+   * @typeParam T - the type of the items
    */
   public readonly items: BehaviorSubject<Array<T>> = new BehaviorSubject<Array<T>>([]);
 
   /**
    * The subscription to the pocketbase realtime api.
-   * @type {Promise<UnsubscribeFunc>} promise
-   * @private
    */
   private promise: Promise<UnsubscribeFunc> = new Promise((resolve, reject) => {});
   /**
    * The flag allows knowing if the subscription to the realtime api is already set.
-   * @type {boolean} true if the subscription is already set
-   * @private
+   * true if the subscription is already set
    */
   private promiseAlreadySet: boolean = false;
 
@@ -67,15 +66,10 @@ export abstract class BasicCrud<T extends BasicType> implements OnDestroy {
    *
    * It starts with `STATUS.UNINITIALIZED` and changes to `STATUS.LOADING` when the item list is loaded.
    * If the item list is loaded successfully, the status changes to `STATUS.READY`.
-   * @type {STATUS}
-   * @private
    */
   private status: STATUS = STATUS.UNINITIALIZED;
   /**
    * The snapshot of the loading status
-   *
-   * @type {BehaviorSubject<STATUS>}
-   * @private
    */
   private statusSnapshot: BehaviorSubject<STATUS> = new BehaviorSubject<STATUS>(STATUS.UNINITIALIZED);
 
@@ -83,10 +77,9 @@ export abstract class BasicCrud<T extends BasicType> implements OnDestroy {
 
   /**
    * initializes the service.
-   * @param {PocketBaseService} pocketBaseService internal pocketbase service
-   * @param {string} idOrName collection id or name
-   * @param {boolean} autoLoad true if the item list should be loaded automatically
-   * @protected
+   * @param pocketBaseService - internal pocketbase service
+   * @param idOrName - collection id or name
+   * @param autoLoad - true if the item list should be loaded automatically
    */
   protected constructor(protected pocketBaseService: PocketBaseService, protected idOrName: string, autoLoad: boolean = true) {
     if (autoLoad) {
@@ -101,16 +94,14 @@ export abstract class BasicCrud<T extends BasicType> implements OnDestroy {
    * This method is called when a record is created, updated/change or loaded.
    * This is necessary because the record received by the api may have the wrong format, for example,
    * when using pocketbase's relations or files types.
-   * @param {Record} record pocketbase record
-   * @returns {T} your item representation
-   * @protected
+   * @param record - pocketbase record
+   * @returns your item representation
    */
   protected abstract createItem(record: Record): T;
 
   /**
    * load the item list.
-   * @returns { Observable<void> } observable that emits when the item list is loaded
-   * @protected
+   * @returns observable that emits when the item list is loaded
    */
   protected requestRecords(): Observable<void> {
     return from(
@@ -120,8 +111,8 @@ export abstract class BasicCrud<T extends BasicType> implements OnDestroy {
 
   /**
    * Creates a new item in the collection.
-   * @param {FormData | T} data data to create the item
-   * @returns {Observable<T>} observable that emits the created item
+   * @param data - data to create the item
+   * @returns observable that emits the created item
    */
   public create(data: FormData | T): Observable<T> {
     return from(
@@ -144,7 +135,7 @@ export abstract class BasicCrud<T extends BasicType> implements OnDestroy {
    * requests a full reload of the item list.
    *
    * This shouldn't be necessary because the item list is automatically updated in realtime.
-   * @returns {Observable<void>} observable that emits when the item list is reloaded
+   * @returns observable that emits when the item list is reloaded
    */
   public reload(): Observable<void> {
     this._items = new Array<T>();
@@ -161,8 +152,8 @@ export abstract class BasicCrud<T extends BasicType> implements OnDestroy {
    *
    * Because the items may not be loaded yet, it returns an observable that emits the item when it is loaded.
    *
-   * @param {string} id item id
-   * @returns {Observable<T>} observable that emits the item
+   * @param id - item id
+   * @returns observable that emits the item
    */
   public getById(id: string): Observable<T> {
     return new Observable((observer: Observer<T>) => {
@@ -201,9 +192,9 @@ export abstract class BasicCrud<T extends BasicType> implements OnDestroy {
    * It is not necessary to send the whole item, only the data to update is needed.
    * It also updates the current items list.
    *
-   * @param {string} id item id to update
-   * @param data data to update
-   * @returns {Observable<T>} observable that emits the updated item
+   * @param id - item id to update
+   * @param data - data to update
+   * @returns observable that emits the updated item
    */
   public update(id: string, data: any): Observable<T> {
     return from(
@@ -224,8 +215,8 @@ export abstract class BasicCrud<T extends BasicType> implements OnDestroy {
    *
    * It also updates the current items list.
    *
-   * @param {string} id item id to delete
-   * @returns {Observable<boolean>} observable that emits true if the item was deleted, false otherwise
+   * @param id - item id to delete
+   * @returns observable that emits true if the item was deleted, false otherwise
    */
   public delete(id: string): Observable<boolean> {
     return from(
@@ -249,9 +240,8 @@ export abstract class BasicCrud<T extends BasicType> implements OnDestroy {
    *  This method is called automatically when the service is created.
    *  The request is split into multiple requests if the collection has more than 500 items.
    *
-   * @param {number} page the page number to fetch
-   * @returns {Promise<void>}
-   * @private
+   * @param page - the page number to fetch
+   * @returns promise if the request is successful
    */
   private async _requestRecords(page: number): Promise<void> {
     if (this.status != STATUS.UNINITIALIZED) {
@@ -277,7 +267,6 @@ export abstract class BasicCrud<T extends BasicType> implements OnDestroy {
 
   /**
    * Sends the current internal item list to the public items observable.
-   * @private
    */
   private reloadItems(): void {
     this.items.next(this._items);
@@ -285,9 +274,8 @@ export abstract class BasicCrud<T extends BasicType> implements OnDestroy {
 
   /**
    * Update the current items list with the data of a record.
-   * @param {string} id
-   * @param {Record} record
-   * @private
+   * @param id - id of the item to update
+   * @param record - data to update
    */
   private _internalUpdateData(id: string, record: Record) {
     let currentItem: T | undefined = this._items.find((item: T) => item.id === id);
@@ -304,8 +292,7 @@ export abstract class BasicCrud<T extends BasicType> implements OnDestroy {
 
   /**
    * Subscribe to the pocketbase realtime api.
-   * @returns {Observable<UnsubscribeFunc>} observable that emits the unsubscribe function when the subscription is ready
-   * @private
+   * @returns observable that emits the unsubscribe function when the subscription is ready
    */
   private subscribe(): Observable<UnsubscribeFunc> {
     if (!this.promiseAlreadySet) {
@@ -349,8 +336,7 @@ export abstract class BasicCrud<T extends BasicType> implements OnDestroy {
 
   /**
    * Unsubscribe from the pocketbase realtime api.
-   * @returns {Observable<void>} observable that emits when the subscription is removed
-   * @private
+   * @returns observable that emits when the subscription is removed
    */
   private unsubscribe(): Observable<void> {
     return from(

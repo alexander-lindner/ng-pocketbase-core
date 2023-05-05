@@ -9,11 +9,14 @@ import {
   RecordAuthResponse,
 }                                                    from "pocketbase";
 import {BehaviorSubject, from, Observable, Observer} from "rxjs";
-import {User}                                        from "../types";
+import {AuthData, User}                              from "../types";
 import {PocketBaseService}                           from "./pocketbase.service";
 
-type AuthData<U> = { loggedIn: boolean, userData: U, providers: Array<AuthProviderInfo>, isAdmin: boolean };
 
+/**
+ * The Auth Service
+ * @public
+ */
 @Injectable(
   {
     providedIn: "root",
@@ -27,7 +30,7 @@ export class AuthService<U extends User> {
 
   /**
    * get the user data
-   * @returns  AuthData<U>  The user data
+   * @returns the user data
    */
   public get snapshot(): AuthData<U> {
     return {
@@ -43,7 +46,7 @@ export class AuthService<U extends User> {
    *
    * setups the auth service
    *
-   * @param {PocketBaseService} pbservice The PocketBase service
+   * @param pbservice - the PocketBase service
    */
   constructor(private pbservice: PocketBaseService) {
     this.pbservice
@@ -77,7 +80,7 @@ export class AuthService<U extends User> {
 
   /**
    * automatically refresh the auth token and data
-   * @returns {Observable<RecordAuthResponse<Record>>} Observable that emits the auth response
+   * @returns Observable that emits the auth response
    */
   public authRefresh(): Observable<RecordAuthResponse<Record>> {
     return from(
@@ -90,8 +93,8 @@ export class AuthService<U extends User> {
 
   /**
    * @beta
-   * @param {string} token
-   * @returns {<boolean>}
+   * @param token - the token
+   * @returns an observable that emits if the request was successful
    */
   public confirmVerification(token: string): Observable<boolean> {
     return from(
@@ -104,8 +107,8 @@ export class AuthService<U extends User> {
 
   /**
    * request an email verification
-   * @param {string} email The email address
-   * @returns {Observable<boolean>} Observable that emits true if an email verification was sent successfully
+   * @param email - the email address
+   * @returns Observable that emits true if email verification was sent successfully
    */
   public requestVerification(email: string): Observable<boolean> {
     return from(
@@ -118,8 +121,8 @@ export class AuthService<U extends User> {
 
   /**
    * Change the email of the current user
-   * @param {string} newMail The new email address
-   * @returns {Observable<boolean>} Observable that emits true if the email change was successful
+   * @param newMail - the new email address
+   * @returns Observable that emits true if the email change was successful
    */
   public changeEmail(newMail: string): Observable<boolean> {
     if (!this.isUserLoggedIn()) {
@@ -136,9 +139,9 @@ export class AuthService<U extends User> {
 
   /**
    * @beta
-   * @param {string} token
-   * @param {string} password
-   * @returns {<boolean>}
+   * @param token - token
+   * @param password - password
+   * @returns an observable that emits if the request was successful
    */
   public confirmEmailChange(token: string, password: string): Observable<boolean> {
     return from(
@@ -158,7 +161,7 @@ export class AuthService<U extends User> {
 
   /**
    * List all external auth providers the current user has linked to their account.
-   * @returns {Observable<Array<ExternalAuth>>}
+   * @returns Observable that emits an array of external auth providers
    */
   public listOauth2Accounts(): Observable<Array<ExternalAuth>> {
     if (!this.isUserLoggedIn()) {
@@ -178,8 +181,7 @@ export class AuthService<U extends User> {
 
   /**
    * returns the current admin state of the user
-   * @returns {boolean} true if the user is an admin
-   * @private
+   * @returns true if the user is an admin
    */
   private _isAdmin(): boolean {
     const model: Record | Admin | null = this.pbservice.getPB().authStore.model;
@@ -188,8 +190,7 @@ export class AuthService<U extends User> {
 
   /**
    * returns the current state of the user
-   * @returns {boolean} true if the user is logged in
-   * @private
+   * @returns true if the user is logged in
    */
   private isUserLoggedIn(): boolean {
     const model: Record | Admin | null = this.pbservice.getPB().authStore.model;
@@ -207,9 +208,9 @@ export class AuthService<U extends User> {
   /**
    * login with username and password
    *
-   * @param {string} username username or email
-   * @param {string} password password
-   * @returns {Observable<RecordAuthResponse<Record> | ClientResponseError>}
+   * @param username - username or email
+   * @param password - password
+   * @returns an observable that emits the auth response
    */
   public login(username: string, password: string): Observable<RecordAuthResponse<Record> | ClientResponseError> {
     return from(
@@ -233,7 +234,7 @@ export class AuthService<U extends User> {
 
   /**
    * redirect the current logged-in user to the external oauth provider
-   * @param {AuthProviderInfo} provider provider. Can be retrieved from `listOauth2Accounts()`
+   * @param provider - provider that can be retrieved from `listOauth2Accounts()`
    */
   public gotoExternalAuthProvider(provider: AuthProviderInfo): void {
     localStorage.setItem("provider", JSON.stringify(provider));
@@ -242,9 +243,9 @@ export class AuthService<U extends User> {
 
   /**
    * login with external oauth provider
-   * @param {AuthProviderInfo} provider provider. Can be retrieved from `listOauth2Accounts()`
-   * @param {string} code oauth code
-   * @returns {Observable<RecordAuthResponse<Record>>}
+   * @param provider - provider that can be retrieved from `listOauth2Accounts()`
+   * @param code - oauth code
+   * @returns an observable that emits the auth response
    */
   public oauth2(provider: AuthProviderInfo, code: string): Observable<RecordAuthResponse<Record>> {
     return from(
@@ -270,10 +271,9 @@ export class AuthService<U extends User> {
   /**
    * Returns an observable that emits an error and completes.
    *
-   * It is helper function to return an observable that emits an error 'not logged in'.
+   * It is a helper function to return an observable that emits an error 'not logged in'.
    *
-   * @returns {getNotLoggedInObservable<T>}
-   * @private
+   * @returns an observable that emits an error and completes
    */
   private getNotLoggedInObservable<T>(): Observable<T> {
     return new Observable((observer: Observer<T>) => {
@@ -287,8 +287,8 @@ export class AuthService<U extends User> {
 
   /**
    * Unlink an OAuth2 provider from the logged-in user.
-   * @param {string} provider unique name of the provider
-   * @returns {<boolean>} true if the unlinking was successful
+   * @param provider - unique name of the provider
+   * @returns true if the unlinking was successful
    */
   public unlinkOAuth2Provider(provider: string): Observable<boolean> {
     if (!this.isUserLoggedIn()) {
@@ -309,12 +309,12 @@ export class AuthService<U extends User> {
   /**
    * Change the password of the logged-in user.
    *
-   * Afterward the user is logged out.
-   * The password and its confirmation must be identical, however this is not checked on the client but the server.
-   * @param {string} password password
-   * @param {string} password2 confirmation of password
-   * @param {string} oldPassword the old password
-   * @returns {Observable<Record>} the updated user record
+   * Afterward, the user is logged out.
+   * The password and its confirmation must be identical; however, this is not checked on the client but the server.
+   * @param password - password
+   * @param password2 - confirmation of password
+   * @param oldPassword - the old password
+   * @returns the updated user record
    */
   public changePassword(password: string, password2: string, oldPassword: string): Observable<Record> {
     if (!this.isUserLoggedIn()) {
