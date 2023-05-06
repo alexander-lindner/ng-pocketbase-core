@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build ng-pocketbase-core; ng build app",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "publish": "ng build && cd dist/ng-pocketbase-core && npm publish --access public"
