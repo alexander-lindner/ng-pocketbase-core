@@ -1,7 +1,7 @@
 {
   "name": "@ng-pocketbase/core",
   "description": "A implementation of the pocketbase api for Angular",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "repository": {
     "type": "git",
     "url": "git@github.com:alexander-lindner/ng-pocketbase-core.git"
