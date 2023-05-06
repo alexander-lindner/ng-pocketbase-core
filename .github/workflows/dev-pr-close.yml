@@ -25,26 +25,26 @@ jobs:
 
       - name: Apply version bump (major)
         if: contains(github.event.pull_request.labels.*.name, 'major')
-        run: npm version major
-      - name: Apply version bump (minor)
-        if: contains(github.event.pull_request.labels.*.name, 'minor')
-        run: npm version minor
-      - name: Apply version bump (patch)
-        if: contains(github.event.pull_request.labels.*.name, 'patch')
-        run: npm version patch
+        run: npm version major --no-git-tag-version && cd projects/ng-pocketbase-core && npm version major
 
-      - name: Apply version bump (major)
-        if: contains(github.event.pull_request.labels.*.name, 'major')
-        run: cd projects/ng-pocketbase-core && npm version major
       - name: Apply version bump (minor)
         if: contains(github.event.pull_request.labels.*.name, 'minor')
-        run: cd projects/ng-pocketbase-core && npm version minor
+        run: npm version minor --no-git-tag-version && cd projects/ng-pocketbase-core && npm version minor
+
       - name: Apply version bump (patch)
         if: contains(github.event.pull_request.labels.*.name, 'patch')
-        run: cd projects/ng-pocketbase-core && npm version patch
+        run: npm version patch --no-git-tag-version && cd projects/ng-pocketbase-core && npm version patch
+
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
+
+      - name: Git commit version bump
+        run: git commit -am "Version bump ${{ steps.package-version.outputs.current-version}}" --no-verify
 
       - name: Git push version bump
         run: git push origin dev --follow-tags --force
+
       - id: set-version
         name: Output version change
         run: npm pkg get version
