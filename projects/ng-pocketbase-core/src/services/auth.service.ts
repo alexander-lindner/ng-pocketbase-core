@@ -1,4 +1,5 @@
 import {Injectable}                                  from "@angular/core";
+import {ActivatedRoute}                              from "@angular/router";
 import {
   Admin,
   AuthMethodsList,
@@ -47,8 +48,9 @@ export class AuthService<U extends User> {
    * setups the auth service
    *
    * @param pbservice - the PocketBase service
+   * @param activatedRoute - the activated route
    */
-  constructor(private pbservice: PocketBaseService) {
+  constructor(private pbservice: PocketBaseService, private activatedRoute: ActivatedRoute) {
     this.pbservice
         .getPB()
         .collection("users")
@@ -242,6 +244,17 @@ export class AuthService<U extends User> {
   }
 
   /**
+   * Automatically handle the oauth2 redirection request
+   * @returns authenticated user data
+   */
+  public handleOAuth2(): Observable<RecordAuthResponse<Record>> {
+    return this.oauth2(
+      this.getChosenProvider(),
+      this.activatedRoute.snapshot.queryParams["code"],
+    );
+  }
+
+  /**
    * login with external oauth provider
    * @param provider - provider that can be retrieved from `listOauth2Accounts()`
    * @param code - oauth code
@@ -341,6 +354,16 @@ export class AuthService<U extends User> {
             return value;
           }),
     );
+  }
+
+  /**
+   * returns the chosen provider from the local storage before the ouath2 redirect
+   * @returns the chosen provider
+   * @private
+   */
+  private getChosenProvider(): AuthProviderInfo {
+    const json = JSON.parse(localStorage.getItem("provider") as string);
+    return json as AuthProviderInfo;
   }
 }
 

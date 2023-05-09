@@ -6,6 +6,8 @@ It provides a set of services for authentication and realtime data handling.
 ## Installation
 `yarn add @ng-pocketbase/core` or `npm install @ng-pocketbase/core`
 
+https://www.npmjs.com/package/@ng-pocketbase/core
+
 ## API
 
 See [GitHub Pages](https://alexander-lindner.github.io/ng-pocketbase-core).
@@ -15,7 +17,6 @@ See [GitHub Pages](https://alexander-lindner.github.io/ng-pocketbase-core).
 ### Initialization
 In your `app.module.ts` import the `PocketBaseModule` and provide the configuration.
 ```typescript
-
 @NgModule(
   {
     imports: [
@@ -154,6 +155,61 @@ providers: [
  //...
 ]
 ```
+
+
+### OAuth
+After you configure an oAuth provider in the pocketbase server, you can receive all available providers:
+```typescript
+export class LoginComponent implements OnInit {
+  providers: Array<AuthProviderInfo> = [];
+  
+  constructor(private auth: AuthService<LocalUser>) {}
+  
+  ngOnInit(): void {
+    this.auth.providers.subscribe(value => {
+      this.providers.length = 0;
+      this.providers.push(...value);
+    });
+  }
+
+  goto(provider: AuthProviderInfo): void {
+    this.auth.gotoExternalAuthProvider(provider);
+  }
+}
+```
+Use the `gotoExternalAuthProvider` method to redirect the user to the external provider and start the oauth flow.
+```html
+<ng-container *ngIf="providers !== undefined">
+  <ng-container *ngFor="let provider of providers">
+    <button (click)="goto(provider)">
+      {{ provider.name }}
+    </button>
+    <br/>
+  </ng-container>
+</ng-container>
+```
+After the uses successfully logged in with the external provider, 
+the user is redirected to the `frontendUiUrl + "/auth/redirect"` url you configured before.
+On this page you need to call the `AuthService::handleOAuth2()` function to finish the oauth flow.
+```typescript
+export class RedirectComponent implements OnInit  {
+ constructor(private auth: AuthService<LocalUser>, private router: Router, private activatedRoute: ActivatedRoute) {}
+
+  public ngOnInit(): void {
+    this.auth
+        .handleOAuth2()
+        .subscribe(
+          {
+            next: (value: RecordAuthResponse<Record>) => this.router.navigate(["/"]),
+            error: (reason: ClientResponseError) => alert(reason.message),
+          },
+        );
+  }
+}
+```
+You can alternatively pass the code as a query parameter to the `AuthService::oauth()` function.
+
+
 ## Example Application
 
 This repository contains an [example application](projects/app) that uses the library.
